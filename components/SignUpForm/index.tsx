@@ -83,7 +83,6 @@ const SignUpForm = () => {
         label="Last name"
         name="lastName"
       />
-      {/* Before it even gets to a server error, there should be an email input component that does a debounced search */}
       <Input
         control={control}
         id="email"
@@ -91,7 +90,6 @@ const SignUpForm = () => {
         name="email"
         type="email"
       />
-      {/* Before it even gets to a server error, there should be a username input component that does a debounced search */}
       <Input control={control} id="username" label="Username" name="username" />
       <Input
         control={control}
