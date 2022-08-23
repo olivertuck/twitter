@@ -47,7 +47,6 @@ const SignUpForm = () => {
     if (emailTaken) {
       return setError('email', {
         message: 'Email taken',
-        type: 'custom',
       });
     }
 
@@ -56,7 +55,6 @@ const SignUpForm = () => {
     if (usernameTaken) {
       return setError('username', {
         message: 'Username taken',
-        type: 'custom',
       });
     }
 
