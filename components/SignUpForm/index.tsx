@@ -1,3 +1,4 @@
+import { useCallback, useEffect } from 'react';
 import Input from '../Input';
 import { SignUpValues } from '../../types';
 import { User } from '@prisma/client';
@@ -16,12 +17,12 @@ const SignUpForm = () => {
       password: '',
       username: '',
     },
+    mode: 'onChange',
     resolver: zodResolver(signUpSchema),
   });
   const email = watch('email');
   const username = watch('username');
-
-  const getEmailTaken = async () => {
+  const getEmailTaken = useCallback(async () => {
     const { data } = await axios.get('/users', {
       params: {
         email,
@@ -29,9 +30,8 @@ const SignUpForm = () => {
     });
 
     return Boolean(data.length);
-  };
-
-  const getUsernameTaken = async () => {
+  }, [email]);
+  const getUsernameTaken = useCallback(async () => {
     const { data } = await axios.get('/users', {
       params: {
         username,
@@ -39,25 +39,33 @@ const SignUpForm = () => {
     });
 
     return Boolean(data.length);
-  };
+  }, [username]);
+
+  useEffect(() => {
+    if (email) {
+      getEmailTaken().then((emailTaken) => {
+        if (emailTaken) {
+          setError('email', {
+            message: 'Email taken',
+          });
+        }
+      });
+    }
+  }, [email, getEmailTaken, setError]);
+
+  useEffect(() => {
+    if (username) {
+      getUsernameTaken().then((usernameTaken) => {
+        if (usernameTaken) {
+          setError('username', {
+            message: 'Username taken',
+          });
+        }
+      });
+    }
+  }, [getUsernameTaken, setError, username]);
 
   const signUp = async (data: SignUpValues) => {
-    const emailTaken = await getEmailTaken();
-
-    if (emailTaken) {
-      return setError('email', {
-        message: 'Email taken',
-      });
-    }
-
-    const usernameTaken = await getUsernameTaken();
-
-    if (usernameTaken) {
-      return setError('username', {
-        message: 'Username taken',
-      });
-    }
-
     const response = await axios.post<User>('/sign-up', data);
 
     return response.data;
